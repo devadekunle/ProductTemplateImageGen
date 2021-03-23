@@ -12,7 +12,7 @@
 		public string BackgroundColor { get; set; }
 		public string Color { get; set; }
 
-		public decimal Opacity { get; set; }
+	
 		
 		public int FontWeight { get; set; }
 
@@ -20,7 +20,7 @@
 
 		public bool IsItalic { get; set; }
 
-		public decimal Degree { get; set; }
+		
 		public bool isUnderLine { get;  set; }
 		public bool isVertical { get; set; }
 	}
