@@ -32,18 +32,18 @@ namespace ProductTemplateImageGen.Service
 			template = new Template
 			{
 				ImageElements = new List<ImageElement>() {
-					new ImageElement { Y = 0, X = 0, ImageUrl = "https://thumbs.dreamstime.com/b/discount-stamp-vector-clip-art-33305813.jpg" }
+					new ImageElement { Y = 0, X = 0, Height = 200, Width = 200, ImageUrl = "https://thumbs.dreamstime.com/b/discount-stamp-vector-clip-art-33305813.jpg" }
 				},
 				TextElements = new List<TextElement>
 					 {
 						  new TextElement
 						  {
-							Height = 500, Width = 1000, FontSize = 25, FontWeight = 3, Z_Index = 1, IsItalic = false, isBold = true, Opacity = 1, X = 100, Y = 1200,Color = "White", BackgroundColor = "Black",FontFamily="Nunito",
-							  Text = @"{name} is simply dummy text of the printing and typesetting industry.{price} has been the industry's standard dummy text ever since the 1500s,when an unknown printer took a of type and scrambled it to make a type specimen book"
+							Height = 100, Width = 500, FontSize = 25, FontWeight = 3, Z_Index = 1, IsItalic = false, isBold = true, Opacity = 1, X = 50, Y = 800,Color = "Red", FontFamily="Arial",
+							  Text = @"{Name} is sold at {Price}{Currency}. IT has been the industry's standard dummy text ever since the 1500s,when an unknown printer took a of type and scrambled it to make a type specimen book"
 						  }, 
 					new TextElement
 						  {
-								Height = 100, Width = 400, FontSize = 75, FontWeight = 3, Z_Index = 1, IsItalic = true, isUnderLine = true, isBold = true, Opacity = 1, X = 100, Y = 1160, Color = "Blue", BackgroundColor = "Yellow",FontFamily="Calibri",
+								Height = 100, Width = 800, FontSize = 35,  FontWeight = 3, Z_Index = 1, IsItalic = true, isUnderLine = true, isBold = true, Opacity = 1, X = 50, Y = 750, Color = "Blue", BackgroundColor = "Yellow",FontFamily="Calibri",
 							  Text = "{Name} is the best",
 						  }
                 },
@@ -67,8 +67,8 @@ namespace ProductTemplateImageGen.Service
 
 			if (template.TextElements.Count > 0)
 			{
-				var processedTextElements = GenerateInterpolatedText(template.TextElements, product);
-				canvas = await LayerTexts(canvas, processedTextElements);
+				
+				canvas = await LayerTexts(canvas, template.TextElements);
 			}
 
 			await SaveImage(canvas, "newImage.png");
@@ -76,10 +76,10 @@ namespace ProductTemplateImageGen.Service
 
 		private Task<GcBitmap> LoadImage(Image image)
 		{
-			var bmp = new GcBitmap(image);
+			
 
 			//Load image
-			return Task.FromResult(bmp);
+			return Task.FromResult(ResizeImage(image, template.Width, template.Height));
 		}
 
 
@@ -88,14 +88,13 @@ namespace ProductTemplateImageGen.Service
 			var g = bmp.CreateGraphics();
 			foreach (var item in textElements)
 			{
-
+				var jsonStringProduct = JsonConvert.SerializeObject(product);
 				TextLayout tl = g.CreateTextLayout();
 				tl.DefaultFormat.FontSize = item.FontSize;
 				tl.DefaultFormat.FontBold = item.isBold;
 				tl.DefaultFormat.FontItalic = item.IsItalic;
 				tl.DefaultFormat.UprightInVerticalText = item.isVertical;
 				tl.MaxWidth = item.Width;
-				
 				tl.MaxHeight = item.Height;
 				tl.WrapMode = WrapMode.WordWrap;
 				
@@ -139,8 +138,7 @@ namespace ProductTemplateImageGen.Service
 			foreach (var item in template.ImageElements)
 			{
 				var image = DownloadImageFromUrl(item.ImageUrl);
-
-				GcBitmap addedimage = new GcBitmap(image);
+				GcBitmap addedimage = ResizeImage(image, item.Width, item.Height);
 				//Combine the two images using various compositing and blending modes
 				bmp.CompositeAndBlend(addedimage, item.X, item.Y, CompositeMode.SourceOver, BlendMode.Normal);
 
@@ -169,6 +167,31 @@ namespace ProductTemplateImageGen.Service
 			return Task.CompletedTask;
 		}
 
+		private GcBitmap ResizeImage(Image image, int width, int height)
+		{
+			
+			GcBitmap originalImage = new GcBitmap(image);
 
+
+			//Reduce image 
+			if (originalImage.PixelHeight > height || originalImage.PixelWidth > width)
+			{
+				int rwidth = originalImage.PixelWidth - (originalImage.PixelWidth - width);
+				int rheight = originalImage.PixelHeight - (originalImage.PixelHeight - height);
+				originalImage = originalImage.Resize(rwidth, rheight,
+										  InterpolationMode.Linear); 
+			}
+
+			if (originalImage.PixelHeight < height || originalImage.PixelWidth < width)
+			{
+				//Enlarge image
+				int ewidth = originalImage.PixelWidth + (width - originalImage.PixelWidth);
+				int eheight = originalImage.PixelHeight + (width - originalImage.PixelWidth);
+				originalImage = originalImage.Resize(ewidth, eheight,
+										  InterpolationMode.Linear); 
+			}
+
+			return originalImage;
+		}
 	}
 }
