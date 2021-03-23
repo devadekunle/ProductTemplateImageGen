@@ -15,8 +15,8 @@ namespace ProductTemplateImageGen.Controllers
 		}
 		[HttpGet]
 		public async Task<IActionResult> Get()
-		{
-			await _imageGenerator.GenerateImage();
+        {
+            await _imageGenerator.GenerateProductTemplate();
 			return Ok();
 		}
 	}

@@ -8,11 +8,12 @@ namespace ProductTemplateImageGen.Model
 {
     public class Template
     {
-        public List<TextElement> TextElements { get; set; }
-        
-        public List<ImageElement> ImageElements { get; set; }
 
-        public List<ShapeElement> ShapeElements { get; set; }
+        public List<TextElement> TextElements { get; set; } = new List<TextElement>();
+
+        public List<ImageElement> ImageElements { get; set; } = new List<ImageElement>();
+
+        public List<ShapeElement> ShapeElements { get; set; } = new List<ShapeElement>();
         
         public int Width { get; set; }
 
