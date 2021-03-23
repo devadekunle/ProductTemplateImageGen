@@ -4,6 +4,7 @@ using GrapeCity.Documents.Text;
 using ProductTemplateImageGen.Model;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -34,12 +35,12 @@ namespace ProductTemplateImageGen.Service
 					 {
 						  new TextElement
 						  {
-						Height = 500, Width = 1000, FontSize = 25, FontWeight = 3, Z_Index = 1, IsItalic = false, isBold = true, Opacity = 1, X = 100, Y = 1200,
+							Height = 500, Width = 1000, FontSize = 25, FontWeight = 3, Z_Index = 1, IsItalic = false, isBold = true, Opacity = 1, X = 100, Y = 1200,Color = "White", BackgroundColor = "Black",FontFamily="Nunito",
 							  Text = @"{name} is simply dummy text of the printing and typesetting industry.{price} has been the industry's standard dummy text ever since the 1500s,when an unknown printer took a of type and scrambled it to make a type specimen book"
 						  }, 
 					new TextElement
 						  {
-								Height = 500, Width = 1000, FontSize = 30, FontWeight = 3, Z_Index = 1, IsItalic = false, isBold = true, Opacity = 1, X = 100, Y = 1400, 
+								Height = 500, Width = 1000, FontSize = 30, FontWeight = 3, Z_Index = 1, IsItalic = false, isBold = true, Opacity = 1, X = 100, Y = 1400, Color = "Black", BackgroundColor = "White",FontFamily="Poppins",
 							  Text = "{price} has been the industry's standard dummy text ever since the 1500s,when an unknown printer took a of type and scrambled it to make a type specimen book"
 						  }
 },
@@ -64,7 +65,7 @@ namespace ProductTemplateImageGen.Service
 			if (template.TextElements.Count > 0)
 			{
 				var processedTextElements = GenerateInterpolatedText(template.TextElements, product);
-				canvas = await ModifyImage(canvas, processedTextElements);
+				canvas = await LayerTexts(canvas, processedTextElements);
 			}
 
 			await SaveImage(canvas, "newImage.png");
@@ -84,7 +85,7 @@ namespace ProductTemplateImageGen.Service
 		}
 
 
-		private Task<GcBitmap> ModifyImage(GcBitmap bmp, List<TextElement> textElements)
+		private Task<GcBitmap> LayerTexts(GcBitmap bmp, List<TextElement> textElements)
 		{
 			var g = bmp.CreateGraphics();
 			foreach (var item in textElements)
@@ -98,6 +99,10 @@ namespace ProductTemplateImageGen.Service
 				tl.MaxWidth = item.Width; // hardcoded
 				tl.MaxHeight = item.Height;
 				tl.WrapMode = WrapMode.WordWrap;
+				tl.DefaultFormat.ForeColor = Color.FromName(item.Color);
+				tl.DefaultFormat.BackColor = Color.FromName(item.BackgroundColor);
+				tl.DefaultFormat.Underline = item.isUnderLine;
+				tl.DefaultFormat.Font = Font.FromFile(Path.Combine("Resources", "Fonts", $"{ item.FontFamily}.ttf"));
 				tl.Append(item.Text);
 				tl.TextAlignment = TextAlignment.Justified;
 				g.DrawTextLayout(tl, new PointF(item.X, item.Y));

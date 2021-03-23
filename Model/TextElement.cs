@@ -5,7 +5,10 @@
 		public string Text { get; set; }
 		public int FontSize { get; set; }
 
-		public int FontFamily { get; set; }
+		public string FontFamily { get; set; }
+
+		public string BackgroundColor { get; set; }
+		public string Color { get; set; }
 
 		public decimal Opacity { get; set; }
 		
@@ -16,7 +19,6 @@
 		public bool IsItalic { get; set; }
 
 		public decimal Degree { get; set; }
-
-
+		public bool isUnderLine { get; internal set; }
 	}
 }

@@ -12,5 +12,9 @@
     <PackageReference Include="GrapeCity.Documents.Imaging" Version="4.0.0.632" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Fonts\" />
+  </ItemGroup>
+
 
 </Project>
