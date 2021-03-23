@@ -38,15 +38,15 @@ namespace ProductTemplateImageGen.Service
 					 {
 						  new TextElement
 						  {
-							Height = 300, Width = 600, FontSize = 50, FontWeight = 3, Z_Index = 1, IsItalic = false, isBold = true, Opacity = 1, X = 100, Y = 1200,Color = "Red", FontFamily="Arial", isVertical = true,
-							  Text = @"{Name} is selling at {Price}{Currency}. It has been the industry's standard dummy text ever since the 1500s,when an unknown printer took a of type and scrambled it to make a type specimen book"
-						  },
+							Height = 500, Width = 1000, FontSize = 25, FontWeight = 3, Z_Index = 1, IsItalic = false, isBold = true, Opacity = 1, X = 100, Y = 1200,Color = "White", BackgroundColor = "Black",FontFamily="Nunito",
+							  Text = @"{name} is simply dummy text of the printing and typesetting industry.{price} has been the industry's standard dummy text ever since the 1500s,when an unknown printer took a of type and scrambled it to make a type specimen book"
+						  }, 
 					new TextElement
 						  {
 								Height = 100, Width = 400, FontSize = 75, FontWeight = 3, Z_Index = 1, IsItalic = true, isUnderLine = true, isBold = true, Opacity = 1, X = 100, Y = 1160, Color = "Blue", BackgroundColor = "Yellow",FontFamily="Calibri",
 							  Text = "{Name} is the best",
 						  }
-},
+                },
 				Height = 1024,
 				Width = 1024
 				
@@ -67,10 +67,8 @@ namespace ProductTemplateImageGen.Service
 
 			if (template.TextElements.Count > 0)
 			{
-				//var processedTextElements = GenerateInterpolatedText(template.TextElements, product);
-				//canvas = await LayerTexts(canvas, processedTextElements);
-
-				var processedTextElements = LayerTexts(canvas, template.TextElements, product);
+				var processedTextElements = GenerateInterpolatedText(template.TextElements, product);
+				canvas = await LayerTexts(canvas, processedTextElements);
 			}
 
 			await SaveImage(canvas, "newImage.png");
@@ -84,21 +82,10 @@ namespace ProductTemplateImageGen.Service
 			return Task.FromResult(bmp);
 		}
 
-		/// <summary>
-		/// dynamic text
-		/// tex1: long text, on 3 lines, red, font = arial black, font size = 13, vertical, opacity = 50%
-		/// text2: short text, blue with yellow backgrund, font = calibri, bold, underlined, italic, 30deg, font size = 20, opacity = 75%
-		/// text2 is above text1, they overlap 30% (partially)
-		/// </summary>
-		/// <param name="bmp"></param>
-		/// <param name="textElements"></param>
-		/// <param name="product"></param>
-		/// <returns></returns>
-		private Task<GcBitmap> LayerTexts(GcBitmap bmp, List<TextElement> textElements, Product product)
+
+		private Task<GcBitmap> LayerTexts(GcBitmap bmp, List<TextElement> textElements)
 		{
 			var g = bmp.CreateGraphics();
-			var jsonStringProduct = JsonConvert.SerializeObject(product);
-
 			foreach (var item in textElements)
 			{
 
