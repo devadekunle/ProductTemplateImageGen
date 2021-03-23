@@ -2,6 +2,8 @@
 {
 	public class TextElement : Element
 	{
+		
+
 		public string Text { get; set; }
 		public int FontSize { get; set; }
 
@@ -19,6 +21,7 @@
 		public bool IsItalic { get; set; }
 
 		public decimal Degree { get; set; }
-		public bool isUnderLine { get; internal set; }
+		public bool isUnderLine { get;  set; }
+		public bool isVertical { get; set; }
 	}
 }
